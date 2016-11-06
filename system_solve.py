@@ -81,3 +81,20 @@ def conjugate_gradient_method_v3(A, b, eps):
             beta = np.linalg.norm(rnext)**2 / np.linalg.norm(rcur)**2
             p = rnext + beta * p
     return np.matrix(x)
+
+def gradient_descent(A, b, eps):
+    m = len(A.T)
+    x = np.zeros(shape=(m,1))
+    i = 0
+    imax = 100000
+    r = b - A * x
+    delta = r.T * r
+    delta0 = delta
+    while i < imax and delta > eps ** 2 * delta0:
+        alpha = float(delta / (r.T * (A * r)))
+        x = x + alpha * r
+        r = b - A * x
+        delta = r.T * r
+        i += 1
+
+    return x

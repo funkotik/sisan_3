@@ -14,11 +14,11 @@ class PolynomialBuilder(object):
         assert isinstance(solution, Solve)
         self._solution = solution
         max_degree = max(solution.deg) - 1
-        if solution.poly_type == 'sh_cheb_doubled':
-            self.symbol = 'T'
+        if solution.poly_type == 'combined_cheb':
+            self.symbol = 'CC'
             self.basis = b_gen.basis_sh_chebyshev(max_degree)
-        elif solution.poly_type == 'cheb':
-            self.symbol = 'K'
+        elif solution.poly_type == 'laguerre':
+            self.symbol = 'L'
             self.basis = b_gen.basis_chebyshev(max_degree)
         elif solution.poly_type == 'sh_cheb_2':
             self.symbol = 'U'

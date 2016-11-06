@@ -6,7 +6,6 @@ import sys
 from PyQt5.QtCore import pyqtSlot, pyqtSignal
 from PyQt5.QtGui import QTextDocument, QFont
 from PyQt5.QtWidgets import QApplication, QDialog, QFileDialog, QMessageBox
-from PyQt5.uic import loadUiType
 
 from presentation import PolynomialBuilder, PolynomialBuilderExpTh
 from solve import Solve
@@ -15,10 +14,10 @@ from bruteforce import BruteForceWindow
 
 app = QApplication(sys.argv)
 app.setApplicationName('lab3_sa')
-form_class, base_class = loadUiType('main_window.ui')
+from main_window import Ui_Form
 
 
-class MainWindow(QDialog, form_class):
+class MainWindow(QDialog, Ui_Form):
     # signals:
     input_changed = pyqtSignal('QString')
     output_changed = pyqtSignal('QString')
@@ -35,10 +34,10 @@ class MainWindow(QDialog, form_class):
                                     self.x3_dim.value(), self.y_dim.value()]
         self.degrees = [self.x1_deg.value(), self.x2_deg.value(), self.x3_deg.value()]
         self.type = 'null'
-        if self.radio_sh_cheb.isChecked():
-            self.type = 'sh_cheb_doubled'
-        elif self.radio_cheb.isChecked():
-            self.type = 'cheb'
+        if self.radio_combined_cheb.isChecked():
+            self.type = 'combined_cheb'
+        elif self.radio_laguerre.isChecked():
+            self.type = 'laguerre'
         elif self.radio_sh_cheb_2.isChecked():
             self.type = 'sh_cheb_2'
         self.custom_func_struct = self.custom_check.isChecked()
@@ -122,10 +121,10 @@ class MainWindow(QDialog, form_class):
     def type_modified(self, isdown):
         if (isdown):
             sender = self.sender().objectName()
-            if sender == 'radio_sh_cheb':
-                self.type = 'sh_cheb_doubled'
-            elif sender == 'radio_cheb':
-                self.type = 'cheb'
+            if sender == 'radio_combined_cheb':
+                self.type = 'combined_cheb'
+            elif sender == 'radio_laguerre':
+                self.type = 'laguerre'
             elif sender == 'radio_sh_cheb_2':
                 self.type = 'sh_cheb_2'
         return

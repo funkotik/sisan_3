@@ -34,9 +34,20 @@ def eval_sh_chebyt(n, x):
             t = np.poly1d([2,0])*t1 -t0
             t0 = t1
             t1 = t
-            print(t)
     return t(np.poly1d([2,-1]))(x)
 
+
+def eval_combined_cheb(n, x):
+    alfa = 1
+
+    return (
+        1 + eval_sh_chebyt(n, x)
+           ) / (
+        1 + eval_sh_chebyu(2 * n, x) / (2*n+1) + eval_sh_chebyu(n, x)/(n+1)
+    )
+
+
+# need
 def eval_sh_chebyu(n, x):
     t0 =np.poly1d([1])
     t1 =np.poly1d([2,0])
@@ -49,9 +60,22 @@ def eval_sh_chebyu(n, x):
             t = np.poly1d([2,0])*t1 -t0
             t0 = t1
             t1 = t
-            print(t)
     return t(np.poly1d([2,-1]))(x)
 
+
+# need
+def eval_laguerre(n, x):
+    if n == 0:
+        return 0.5
+    elif n ==1:
+        return 1-x
+    t0 = np.poly1d([1])
+    t1 = np.poly1d([-1,1])
+    for i in range(2,n+1):
+        t = ((2*i - 1 - np.poly1d([1, 0]))*t1 - (i-1)**2 * t0)
+        t0 = t1
+        t1 = t
+    return t(x)
 
 class Solve(object):
     OFFSET = 1e-10
@@ -77,7 +101,7 @@ class Solve(object):
         # list of sum degrees [ 3,1,2] -> [3,4,6]
         self.dim_integral = [sum(self.dim[:i + 1]) for i in range(len(self.dim))]
 
-    def _minimize_equation(self, A, b, type='cjg2'):
+    def _minimize_equation(self, A, b, type='g'):
         """
         Finds such vector x that |Ax-b|->min.
         :param A: Matrix A
@@ -92,6 +116,8 @@ class Solve(object):
             return conjugate_gradient_method_v2(A.T * A, A.T * b, self.eps)
         elif type == 'cjg3':
             return conjugate_gradient_method_v3(A.T * A, A.T * b, self.eps)
+        elif type == 'g':
+            return gradient_descent(A.T * A, A.T * b, self.eps)
 
     def norm_data(self):
         """
@@ -158,9 +184,9 @@ class Solve(object):
         Define function to polynomials
         :return: function
         """
-        if self.poly_type == 'sh_cheb_doubled':
+        if self.poly_type == 'combined_cheb':
             self.poly_f = eval_sh_chebyt
-        elif self.poly_type == 'cheb':
+        elif self.poly_type == 'laguerre':
             self.poly_f = eval_chebyt
         elif self.poly_type == 'sh_cheb_2':
             self.poly_f = lambda deg, x: eval_sh_chebyu(deg, x) / (deg + 1)
@@ -199,6 +225,7 @@ class Solve(object):
             c = np.ndarray(shape=(self.n, 1), dtype=float)
             for i in range(self.n):
                 c[i, 0] = self.poly_f(deg, v[i])
+                print(c[i, 0])
             return c
 
         def vector(vec, p):
