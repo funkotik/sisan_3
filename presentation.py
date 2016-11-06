@@ -1,3 +1,6 @@
+import tkinter
+from tkinter import filedialog
+import matplotlib.backends.backend_tkagg
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial import Polynomial as pnm
