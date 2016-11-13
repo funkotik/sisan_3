@@ -4,14 +4,11 @@ import math
 
 from statsmodels.tsa.arima_model import ARIMA
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.optimize import brute
 
 
 def choose_arima_order(endog):
-    def objfunc(order, *params):
+    def objfunc(order, params):
         series = params
-
         try:
             mod = ARIMA(series, order, exog=None)
             with warnings.catch_warnings():
@@ -23,9 +20,15 @@ def choose_arima_order(endog):
             return float('inf')
         return res.aic
 
-    grid = (slice(1, 5, 1), slice(0, 3, 1), slice(0, 5, 1))
-
-    t = brute(objfunc, grid, args=endog, finish=None).astype(int)
+    min = float('inf')
+    t = [1, 0, 0]
+    for i in range(1, 5):
+        for j in range(0, 3):
+            for k in range(0, 5):
+                res = objfunc([i, j, k], endog)
+                if res < min:
+                    min = res
+                    t = [i, j, k]
 
     return ARIMA(endog, t, exog=None).fit()
 

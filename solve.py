@@ -41,9 +41,9 @@ def eval_combined_cheb(n, x):
     alfa = 1
 
     return (
-        1 + eval_sh_chebyt(n, x)
+        3 + eval_sh_chebyt(n, x)
            ) / (
-        1 + eval_sh_chebyu(2 * n, x) / (2*n+1) + eval_sh_chebyu(n, x)/(n+1)
+        3 + eval_sh_chebyu(2 * n, x) / (2*n+1) + eval_sh_chebyu(n, x)/(n+1)
     )
 
 
@@ -185,9 +185,9 @@ class Solve(object):
         :return: function
         """
         if self.poly_type == 'combined_cheb':
-            self.poly_f = eval_sh_chebyt
+            self.poly_f = eval_combined_cheb
         elif self.poly_type == 'laguerre':
-            self.poly_f = eval_chebyt
+            self.poly_f = eval_laguerre
         elif self.poly_type == 'sh_cheb_2':
             self.poly_f = lambda deg, x: eval_sh_chebyu(deg, x) / (deg + 1)
         elif self.poly_type == 'sin':
@@ -225,7 +225,6 @@ class Solve(object):
             c = np.ndarray(shape=(self.n, 1), dtype=float)
             for i in range(self.n):
                 c[i, 0] = self.poly_f(deg, v[i])
-                print(c[i, 0])
             return c
 
         def vector(vec, p):
